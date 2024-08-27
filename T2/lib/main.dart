@@ -17,7 +17,7 @@ class MyApp extends StatelessWidget {
         title: 'Namer App',
         theme: ThemeData(
           useMaterial3: true,
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepOrange),
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.lightGreen),
         ),
         home: MyHomePage(),
       ),
@@ -34,12 +34,25 @@ class MyAppState extends ChangeNotifier {
   }
 
   var favorites = <WordPair>[];
+  var dislikes = <WordPair>[]; // Nueva lista para dislikes
 
   void toggleFavorite() {
     if (favorites.contains(current)) {
       favorites.remove(current);
     } else {
       favorites.add(current);
+      dislikes.remove(current); // Remover de dislikes si se agrega a favoritos
+    }
+    notifyListeners();
+  }
+
+  void toggleDislike() {
+    // Nueva función para dislikes
+    if (dislikes.contains(current)) {
+      dislikes.remove(current);
+    } else {
+      dislikes.add(current);
+      favorites.remove(current); // Remover de favoritos si se agrega a dislikes
     }
     notifyListeners();
   }
@@ -63,6 +76,9 @@ class _MyHomePageState extends State<MyHomePage> {
       case 1:
         page = FavoritesPage();
         break;
+      case 2:
+        page = DislikesPage(); // Nueva página de dislikes
+        break;
       default:
         throw UnimplementedError('no widget for $selectedIndex');
     }
@@ -82,6 +98,11 @@ class _MyHomePageState extends State<MyHomePage> {
                   NavigationRailDestination(
                     icon: Icon(Icons.favorite),
                     label: Text('Favorites'),
+                  ),
+                  NavigationRailDestination(
+                    // Nuevo ícono para dislikes
+                    icon: Icon(Icons.thumb_down),
+                    label: Text('Dislikes'),
                   ),
                 ],
                 selectedIndex: selectedIndex,
@@ -111,11 +132,18 @@ class GeneratorPage extends StatelessWidget {
     var appState = context.watch<MyAppState>();
     var pair = appState.current;
 
-    IconData icon;
+    IconData likeIcon;
     if (appState.favorites.contains(pair)) {
-      icon = Icons.favorite;
+      likeIcon = Icons.favorite;
     } else {
-      icon = Icons.favorite_border;
+      likeIcon = Icons.favorite_border;
+    }
+
+    IconData dislikeIcon; // Ícono de dislike
+    if (appState.dislikes.contains(pair)) {
+      dislikeIcon = Icons.thumb_down;
+    } else {
+      dislikeIcon = Icons.thumb_down_alt_outlined;
     }
 
     return Center(
@@ -131,7 +159,7 @@ class GeneratorPage extends StatelessWidget {
                 onPressed: () {
                   appState.toggleFavorite();
                 },
-                icon: Icon(icon),
+                icon: Icon(likeIcon),
                 label: Text('Like'),
               ),
               SizedBox(width: 10),
@@ -140,6 +168,14 @@ class GeneratorPage extends StatelessWidget {
                   appState.getNext();
                 },
                 child: Text('Next'),
+              ),
+              SizedBox(width: 10),
+              ElevatedButton.icon(
+                onPressed: () {
+                  appState.toggleDislike();
+                },
+                icon: Icon(dislikeIcon),
+                label: Text('Dislike'),
               ),
             ],
           ),
@@ -199,6 +235,35 @@ class FavoritesPage extends StatelessWidget {
         for (var pair in appState.favorites)
           ListTile(
             leading: Icon(Icons.favorite),
+            title: Text(pair.asLowerCase),
+          ),
+      ],
+    );
+  }
+}
+
+class DislikesPage extends StatelessWidget {
+  // Nueva página para dislikes
+  @override
+  Widget build(BuildContext context) {
+    var appState = context.watch<MyAppState>();
+
+    if (appState.dislikes.isEmpty) {
+      return Center(
+        child: Text('No dislikes yet.'),
+      );
+    }
+
+    return ListView(
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(20),
+          child: Text('You have '
+              '${appState.dislikes.length} dislikes:'),
+        ),
+        for (var pair in appState.dislikes)
+          ListTile(
+            leading: Icon(Icons.thumb_down),
             title: Text(pair.asLowerCase),
           ),
       ],
