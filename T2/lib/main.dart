@@ -56,6 +56,16 @@ class MyAppState extends ChangeNotifier {
     }
     notifyListeners();
   }
+
+  void removeFavorite(WordPair pair) {
+    favorites.remove(pair);
+    notifyListeners();
+  }
+
+  void removeDislike(WordPair pair) {
+    dislikes.remove(pair);
+    notifyListeners();
+  }
 }
 
 class MyHomePage extends StatefulWidget {
@@ -219,26 +229,61 @@ class FavoritesPage extends StatelessWidget {
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
 
+    final ThemeData favoritesTheme = ThemeData(
+      useMaterial3: true,
+      colorScheme: ColorScheme.fromSeed(
+        seedColor: Colors.pinkAccent,
+      ),
+    );
+
     if (appState.favorites.isEmpty) {
-      return Center(
-        child: Text('No favorites yet.'),
+      return Theme(
+        data: favoritesTheme,
+        child:
+        Center(
+          child: Text('No favorites yet.'),
+        ),
       );
     }
 
-    return ListView(
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(20),
-          child: Text('You have '
-              '${appState.favorites.length} favorites:'),
-        ),
-        for (var pair in appState.favorites)
-          ListTile(
-            leading: Icon(Icons.favorite),
-            title: Text(pair.asLowerCase),
+    return Theme(
+      data: favoritesTheme,
+      child:
+      ListView(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(20),
+            child: Text('You have '
+                '${appState.favorites.length} favorites:'),
           ),
-      ],
+          for (var pair in appState.favorites)
+            Padding(
+              padding: const EdgeInsets.all(0),
+              child: Container(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: ListTile(
+                        leading: Icon(Icons.favorite),
+                        title: Text(pair.asLowerCase),
+                      ),
+                    ),
+                    SizedBox(width: 10),
+                    ElevatedButton(
+                      onPressed: () {
+                        appState.removeFavorite(pair);
+                      },
+                      child: Text("Remove"),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+        ],
+      ),
     );
+
   }
 }
 
@@ -248,25 +293,57 @@ class DislikesPage extends StatelessWidget {
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
 
+    final ThemeData dislikesTheme = ThemeData(
+      useMaterial3: true,
+      colorScheme: ColorScheme.fromSeed(
+        seedColor: Colors.purpleAccent,
+      ),
+    );
+
     if (appState.dislikes.isEmpty) {
-      return Center(
-        child: Text('No dislikes yet.'),
+      return Theme(
+        data: dislikesTheme,
+        child: Center(
+          child: Text('No dislikes yet.'),
+        ),
       );
     }
 
-    return ListView(
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(20),
-          child: Text('You have '
-              '${appState.dislikes.length} dislikes:'),
-        ),
-        for (var pair in appState.dislikes)
-          ListTile(
-            leading: Icon(Icons.thumb_down),
-            title: Text(pair.asLowerCase),
+    return Theme(
+      data: dislikesTheme,
+      child: ListView(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(20),
+            child: Text('You have '
+                '${appState.dislikes.length} dislikes:'),
           ),
-      ],
+          for (var pair in appState.dislikes)
+            Padding(
+              padding: const EdgeInsets.all(0),
+              child: Container(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: ListTile(
+                        leading: Icon(Icons.thumb_down),
+                        title: Text(pair.asLowerCase),
+                      ),
+                    ),
+                    SizedBox(width: 10),
+                    ElevatedButton(
+                      onPressed: () {
+                        appState.removeDislike(pair);
+                      },
+                      child: Text("Remove"),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+        ],
+      )
     );
   }
 }
