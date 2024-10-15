@@ -3,7 +3,7 @@ import '../data/category_data.dart';
 import '../screens/category_screen.dart';
 
 class CategoryItem extends StatelessWidget {
-  final Category category; // Cambia a Category
+  final Category category;
 
   const CategoryItem({
     Key? key,

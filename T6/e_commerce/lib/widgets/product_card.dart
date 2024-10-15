@@ -25,7 +25,7 @@ class ProductCard extends StatelessWidget {
             color: Colors.grey.withOpacity(0.5),
             spreadRadius: 2,
             blurRadius: 7,
-            offset: const Offset(0, 3), // Cambiar posición de la sombra
+            offset: const Offset(0, 3),
           ),
         ],
       ),

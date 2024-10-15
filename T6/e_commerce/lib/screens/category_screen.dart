@@ -18,7 +18,6 @@ class CategoryScreen extends StatelessWidget {
         child: Wrap(
           runSpacing: 10,
           children: [
-            // Contenedor para las categorías de ropa
             Container(
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(10),

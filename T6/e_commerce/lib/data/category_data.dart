@@ -10,7 +10,6 @@ class Category {
   });
 }
 
-// Lista de categorías
 final List<Category> categories = [
   Category(imagePath: 'assets/mujer.jpg', label: 'Mujer'),
   Category(imagePath: 'assets/hombre.webp', label: 'Hombre'),
